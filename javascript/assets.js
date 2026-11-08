@@ -1,35 +1,37 @@
 // =====================================
-// CROSSY CHICKEN ADVENTURE
-// ASSET LOADER
+// CHICKEN RUNNER
+// ASSETS.JS
 // =====================================
 
 const Assets = {};
 
 // =====================================
-// SPRITE SHEETS
+// IMAGE LOADING
 // =====================================
 
 Assets.chickenSheet = new Image();
 Assets.enemySheet = new Image();
 Assets.worldSheet = new Image();
 
+// REAL FILENAMES
+
 Assets.chickenSheet.src =
-"sprites/chicken_sheet.png";
+"sprites/chicken_sheet.png.png";
 
 Assets.enemySheet.src =
-"sprites/enemy_sheet.png";
+"sprites/enemy_sheet.png.png";
 
 Assets.worldSheet.src =
-"sprites/environment_sheet.png";
+"sprites/environment_sheet.png.png";
 
 // =====================================
-// ASSET LOADING
+// LOAD TRACKING
 // =====================================
 
 Assets.loaded = 0;
 Assets.total = 3;
 
-function assetLoaded() {
+function assetLoaded(){
 
     Assets.loaded++;
 
@@ -48,7 +50,42 @@ assetLoaded;
 Assets.worldSheet.onload =
 assetLoaded;
 
-Assets.ready = function() {
+// =====================================
+// ASSET ERRORS
+// =====================================
+
+Assets.chickenSheet.onerror =
+() => {
+
+    console.error(
+        "Chicken sheet failed to load"
+    );
+
+};
+
+Assets.enemySheet.onerror =
+() => {
+
+    console.error(
+        "Enemy sheet failed to load"
+    );
+
+};
+
+Assets.worldSheet.onerror =
+() => {
+
+    console.error(
+        "Environment sheet failed to load"
+    );
+
+};
+
+// =====================================
+// READY CHECK
+// =====================================
+
+Assets.ready = function(){
 
     return (
         Assets.loaded >= Assets.total
@@ -57,7 +94,7 @@ Assets.ready = function() {
 };
 
 // =====================================
-// GAME DATA
+// GAME SETTINGS
 // =====================================
 
 const GameData = {
@@ -129,228 +166,84 @@ const ChickenAnimations = {
 const EnemyTypes = {
 
     slime:{
-
         row:0,
-
-        width:48,
-        height:48,
-
+        width:64,
+        height:64,
         health:1,
-
         speed:1.5
-
     },
 
     goblin:{
-
         row:1,
-
         width:64,
         height:64,
-
         health:2,
-
         speed:2
-
     },
 
     skeleton:{
-
         row:2,
-
         width:64,
         height:64,
-
         health:3,
-
         speed:1.5
-
     },
 
     bat:{
-
         row:3,
-
         width:64,
         height:64,
-
         health:1,
-
         speed:3
-
     },
 
     spider:{
-
         row:4,
-
         width:64,
         height:64,
-
         health:2,
-
         speed:1.8
-
     },
 
     plant:{
-
         row:5,
-
         width:64,
         height:64,
-
         health:4,
-
         speed:0
-
     },
 
     ghost:{
-
         row:6,
-
         width:64,
         height:64,
-
         health:2,
-
         speed:2.5
-
     },
 
     bandit:{
-
         row:7,
-
         width:64,
         height:64,
-
         health:5,
-
         speed:3
-
     }
 
 };
 
 // =====================================
-// WORLD OBJECTS
+// WORLD SETTINGS
 // =====================================
 
-const WorldObjects = {
+const LevelSettings = {
 
-    grassTile:{
-        x:0,
-        y:0,
-        w:64,
-        h:64
-    },
+    worldWidth:8000,
 
-    dirtTile:{
-        x:0,
-        y:64,
-        w:64,
-        h:64
-    },
+    groundHeight:620,
 
-    stoneTile:{
-        x:0,
-        y:128,
-        w:64,
-        h:64
-    },
+    goalX:7600,
 
-    tree:{
-        x:340,
-        y:20,
-        w:180,
-        h:220
-    },
-
-    pineTree:{
-        x:780,
-        y:20,
-        w:180,
-        h:260
-    },
-
-    bush:{
-        x:1040,
-        y:70,
-        w:140,
-        h:120
-    },
-
-    rock:{
-        x:810,
-        y:150,
-        w:120,
-        h:90
-    },
-
-    log:{
-        x:980,
-        y:150,
-        w:150,
-        h:80
-    },
-
-    stump:{
-        x:1150,
-        y:130,
-        w:120,
-        h:120
-    },
-
-    crate:{
-        x:850,
-        y:420,
-        w:120,
-        h:120
-    },
-
-    barrel:{
-        x:980,
-        y:420,
-        w:100,
-        h:120
-    },
-
-    fence:{
-        x:1120,
-        y:420,
-        w:150,
-        h:100
-    },
-
-    mushroom:{
-        x:1010,
-        y:670,
-        w:80,
-        h:80
-    },
-
-    spikes:{
-        x:720,
-        y:660,
-        w:100,
-        h:100
-    },
-
-    bee:{
-        x:1150,
-        y:650,
-        w:80,
-        h:80
-    },
-
-    snake:{
-        x:1300,
-        y:760,
-        w:120,
-        h:80
-    }
+    checkpointX:4000
 
 };
 
@@ -367,46 +260,16 @@ const Collectables = {
 };
 
 // =====================================
-// LEVEL SETTINGS
-// =====================================
-
-const LevelSettings = {
-
-    worldWidth:8000,
-
-    groundHeight:620,
-
-    goalX:7600,
-
-    checkpointX:4000
-
-};
-
-// =====================================
-// AUDIO
+// TEMP SOUND SYSTEM
 // =====================================
 
 const Sounds = {
 
-    jump:new Audio(
-        "audio/jump.wav"
-    ),
-
-    coin:new Audio(
-        "audio/coin.wav"
-    ),
-
-    hurt:new Audio(
-        "audio/hurt.wav"
-    ),
-
-    win:new Audio(
-        "audio/win.wav"
-    ),
-
-    peck:new Audio(
-        "audio/peck.wav"
-    )
+    jump:null,
+    coin:null,
+    hurt:null,
+    win:null,
+    peck:null
 
 };
 
@@ -415,5 +278,5 @@ const Sounds = {
 // =====================================
 
 console.log(
-    "Assets Loaded Successfully"
+    "Chicken Runner Assets Loaded"
 );
