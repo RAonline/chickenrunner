@@ -1,32 +1,35 @@
-// ======================================
+// =====================================
 // WORLD.JS
-// ======================================
+// CHICKEN RUNNER
+// =====================================
+
+let cameraX = 0;
 
 const WORLD = {
 
-    width: LevelSettings.worldWidth,
+    width: 8000,
 
     groundY: 620
 
 };
 
-// ======================================
+// =====================================
 // CAMERA
-// ======================================
+// =====================================
 
-let cameraX = 0;
-
-function updateCamera() {
+function updateCamera(){
 
     cameraX =
-        player.x - 400;
+    player.x -
+    canvas.width / 3;
 
     if(cameraX < 0)
         cameraX = 0;
 
     if(
         cameraX >
-        WORLD.width - canvas.width
+        WORLD.width -
+        canvas.width
     ){
 
         cameraX =
@@ -37,76 +40,63 @@ function updateCamera() {
 
 }
 
-// ======================================
-// DECORATIONS
-// ======================================
+// =====================================
+// LEVEL OBJECTS
+// =====================================
 
 const decorations = [
 
-    {type:"tree",x:500,y:340},
-    {type:"tree",x:1200,y:340},
+    {type:"tree",x:500,y:360},
+    {type:"tree",x:1300,y:360},
+    {type:"tree",x:2500,y:360},
 
-    {type:"pineTree",x:1800,y:310},
-    {type:"pineTree",x:2400,y:310},
+    {type:"pine",x:3400,y:320},
+    {type:"pine",x:4300,y:320},
 
-    {type:"bush",x:700,y:520},
-    {type:"bush",x:2100,y:520},
-
+    {type:"bush",x:1800,y:520},
     {type:"bush",x:2900,y:520},
-
-    {type:"tree",x:4200,y:340},
-
-    {type:"pineTree",x:4800,y:310},
-
-    {type:"tree",x:6500,y:340},
-
-    {type:"bush",x:7000,y:520}
+    {type:"bush",x:5200,y:520},
+    {type:"bush",x:6500,y:520}
 
 ];
-
-// ======================================
-// OBSTACLES
-// ======================================
 
 const obstacles = [
 
-    {type:"rock",x:800,y:535,w:80,h:70},
+    {type:"rock",x:800,y:560,w:80,h:60},
 
-    {type:"log",x:1300,y:560,w:120,h:50},
+    {type:"log",x:1200,y:560,w:120,h:50},
 
-    {type:"barrel",x:2200,y:520,w:70,h:100},
+    {type:"hay",x:1800,y:520,w:90,h:100},
 
-    {type:"crate",x:2800,y:510,w:90,h:90},
+    {type:"crate",x:2600,y:520,w:90,h:90},
 
-    {type:"spikes",x:3500,y:580,w:70,h:40},
+    {type:"barrel",x:3200,y:500,w:80,h:120},
 
-    {type:"mushroom",x:4000,y:550,w:60,h:60},
+    {type:"spikes",x:4200,y:580,w:80,h:40},
 
-    {type:"barrel",x:4700,y:520,w:70,h:100},
+    {type:"mushroom",x:4700,y:540,w:70,h:70},
 
-    {type:"rock",x:5500,y:535,w:80,h:70},
+    {type:"barrel",x:6000,y:500,w:80,h:120},
 
-    {type:"spikes",x:6000,y:580,w:70,h:40},
-
-    {type:"crate",x:6800,y:510,w:90,h:90}
+    {type:"spikes",x:6900,y:580,w:80,h:40}
 
 ];
 
-// ======================================
+// =====================================
 // COINS
-// ======================================
+// =====================================
 
 const coins = [];
 
-for(let i=0;i<50;i++){
+for(let i=0;i<45;i++){
 
     coins.push({
 
-        x:700 + i * 130,
+        x:600 + (i * 150),
 
         y:
-        450 +
-        Math.sin(i) * 70,
+        420 +
+        Math.sin(i)*60,
 
         collected:false
 
@@ -114,30 +104,30 @@ for(let i=0;i<50;i++){
 
 }
 
-// ======================================
+// =====================================
 // GOAL
-// ======================================
+// =====================================
 
 const goalFlag = {
 
-    x:7500,
+    x:7600,
 
-    y:420,
+    y:380,
 
-    width:80,
+    width:100,
 
-    height:200
+    height:220
 
 };
 
-// ======================================
+// =====================================
 // BACKGROUND
-// ======================================
+// =====================================
 
 function drawSky(){
 
     ctx.fillStyle =
-    "#7fd6ff";
+    "#87CEEB";
 
     ctx.fillRect(
         0,
@@ -148,219 +138,349 @@ function drawSky(){
 
 }
 
+// =====================================
+// PARALLAX
+// =====================================
+
 function drawParallax(){
 
-    let mountainMove =
-    cameraX * 0.2;
-
-    let treeMove =
-    cameraX * 0.5;
+    const move =
+    cameraX * 0.25;
 
     // mountains
 
     ctx.fillStyle =
-    "#88a5d8";
+    "#93B5E1";
 
     ctx.beginPath();
 
-    ctx.moveTo(-mountainMove,500);
-
-    ctx.lineTo(
-        300-mountainMove,
-        180
-    );
-
-    ctx.lineTo(
-        600-mountainMove,
-        500
-    );
+    ctx.moveTo(-move,500);
+    ctx.lineTo(250-move,220);
+    ctx.lineTo(500-move,500);
 
     ctx.fill();
 
     ctx.beginPath();
 
-    ctx.moveTo(
-        450-mountainMove,
-        500
-    );
-
-    ctx.lineTo(
-        800-mountainMove,
-        150
-    );
-
-    ctx.lineTo(
-        1200-mountainMove,
-        500
-    );
+    ctx.moveTo(350-move,500);
+    ctx.lineTo(700-move,180);
+    ctx.lineTo(1050-move,500);
 
     ctx.fill();
 
-    // forest silhouette
+    // forest
 
     ctx.fillStyle =
-    "#4f8052";
+    "#4B8B51";
 
     for(let i=0;i<20;i++){
 
         ctx.fillRect(
-            i*120-treeMove,
-            350,
-            80,
-            250
+
+            (i*150) - move,
+
+            340,
+
+            70,
+
+            280
+
         );
 
     }
 
 }
 
-// ======================================
+// =====================================
 // GROUND
-// ======================================
+// =====================================
 
 function drawGround(){
 
-    for(
-        let x=0;
-        x<WORLD.width;
-        x+=64
-    ){
+    ctx.fillStyle =
+    "#65C255";
 
-        ctx.drawImage(
+    ctx.fillRect(
 
-            Assets.worldSheet,
+        -cameraX,
 
-            0,
-            0,
+        WORLD.groundY,
 
-            64,
-            64,
+        WORLD.width,
 
-            x-cameraX,
+        200
 
-            WORLD.groundY,
+    );
 
-            64,
-            64
+    ctx.fillStyle =
+    "#734D26";
 
-        );
+    ctx.fillRect(
 
-    }
+        -cameraX,
+
+        WORLD.groundY + 30,
+
+        WORLD.width,
+
+        170
+
+    );
 
 }
 
-// ======================================
+// =====================================
 // DECORATIONS
-// ======================================
+// =====================================
 
 function drawDecorations(){
 
     decorations.forEach(obj=>{
 
-        let data =
-        WorldObjects[
-            obj.type
-        ];
+        switch(obj.type){
 
-        if(!data) return;
+            case "tree":
 
-        ctx.drawImage(
+                ctx.fillStyle =
+                "#3E8B3E";
 
-            Assets.worldSheet,
+                ctx.beginPath();
 
-            data.x,
-            data.y,
+                ctx.arc(
+                    obj.x-cameraX,
+                    obj.y,
+                    50,
+                    0,
+                    Math.PI*2
+                );
 
-            data.w,
-            data.h,
+                ctx.fill();
 
-            obj.x-cameraX,
-            obj.y,
+                ctx.fillStyle =
+                "#7B4B20";
 
-            data.w,
-            data.h
+                ctx.fillRect(
+                    obj.x-cameraX-10,
+                    obj.y,
+                    20,
+                    100
+                );
 
-        );
+                break;
 
-    });
+            case "pine":
 
-}
+                ctx.fillStyle =
+                "#2E7D32";
 
-// ======================================
-// OBSTACLES
-// ======================================
+                ctx.beginPath();
 
-function drawObstacles(){
+                ctx.moveTo(
+                    obj.x-cameraX,
+                    obj.y
+                );
 
-    obstacles.forEach(obj=>{
+                ctx.lineTo(
+                    obj.x-cameraX-50,
+                    obj.y+120
+                );
 
-        let data =
-        WorldObjects[
-            obj.type
-        ];
+                ctx.lineTo(
+                    obj.x-cameraX+50,
+                    obj.y+120
+                );
 
-        if(!data) return;
+                ctx.fill();
 
-        ctx.drawImage(
+                break;
 
-            Assets.worldSheet,
+            case "bush":
 
-            data.x,
-            data.y,
+                ctx.fillStyle =
+                "#4CAF50";
 
-            data.w,
-            data.h,
+                ctx.beginPath();
 
-            obj.x-cameraX,
-            obj.y,
+                ctx.arc(
+                    obj.x-cameraX,
+                    obj.y,
+                    35,
+                    0,
+                    Math.PI*2
+                );
 
-            data.w,
-            data.h
+                ctx.fill();
 
-        );
-
-    });
-
-}
-
-// ======================================
-// COINS
-// ======================================
-
-function updateCoins(){
-
-    coins.forEach(coin=>{
-
-        if(
-            coin.collected
-        ) return;
-
-        const dx =
-        player.x - coin.x;
-
-        const dy =
-        player.y - coin.y;
-
-        const dist =
-        Math.sqrt(
-            dx*dx +
-            dy*dy
-        );
-
-        if(dist < 50){
-
-            coin.collected =
-            true;
-
-            player.addScore(
-                Collectables.coinValue
-            );
+                break;
 
         }
 
     });
 
 }
+
+// =====================================
+// OBSTACLES
+// =====================================
+
+function drawObstacles(){
+
+    obstacles.forEach(obj=>{
+
+        switch(obj.type){
+
+            case "rock":
+
+                ctx.fillStyle =
+                "gray";
+
+                ctx.beginPath();
+
+                ctx.arc(
+                    obj.x-cameraX,
+                    obj.y,
+                    35,
+                    0,
+                    Math.PI*2
+                );
+
+                ctx.fill();
+
+                break;
+
+            case "log":
+
+                ctx.fillStyle =
+                "#8B5A2B";
+
+                ctx.fillRect(
+                    obj.x-cameraX,
+                    obj.y,
+                    120,
+                    40
+                );
+
+                break;
+
+            case "barrel":
+
+                ctx.fillStyle =
+                "#8D5524";
+
+                ctx.fillRect(
+                    obj.x-cameraX,
+                    obj.y,
+                    60,
+                    90
+                );
+
+                break;
+
+            case "crate":
+
+                ctx.fillStyle =
+                "#A05A2C";
+
+                ctx.fillRect(
+                    obj.x-cameraX,
+                    obj.y,
+                    70,
+                    70
+                );
+
+                break;
+
+            case "hay":
+
+                ctx.fillStyle =
+                "#E4D96F";
+
+                ctx.fillRect(
+                    obj.x-cameraX,
+                    obj.y,
+                    90,
+                    90
+                );
+
+                break;
+
+            case "spikes":
+
+                ctx.fillStyle =
+                "#CCCCCC";
+
+                for(
+                    let i=0;
+                    i<4;
+                    i++
+                ){
+
+                    ctx.beginPath();
+
+                    ctx.moveTo(
+                        obj.x-cameraX +
+                        i*20,
+                        obj.y+30
+                    );
+
+                    ctx.lineTo(
+                        obj.x-cameraX +
+                        10 +
+                        i*20,
+                        obj.y
+                    );
+
+                    ctx.lineTo(
+                        obj.x-cameraX +
+                        20 +
+                        i*20,
+                        obj.y+30
+                    );
+
+                    ctx.fill();
+
+                }
+
+                break;
+
+            case "mushroom":
+
+                ctx.fillStyle =
+                "red";
+
+                ctx.beginPath();
+
+                ctx.arc(
+                    obj.x-cameraX,
+                    obj.y,
+                    25,
+                    Math.PI,
+                    0
+                );
+
+                ctx.fill();
+
+                ctx.fillStyle =
+                "#EEE";
+
+                ctx.fillRect(
+                    obj.x-cameraX-8,
+                    obj.y,
+                    16,
+                    30
+                );
+
+                break;
+
+        }
+
+    });
+
+}
+
+// =====================================
+// COINS
+// =====================================
 
 function drawCoins(){
 
@@ -376,16 +496,11 @@ function drawCoins(){
         ctx.beginPath();
 
         ctx.arc(
-
             coin.x-cameraX,
             coin.y,
-
             12,
-
             0,
-
             Math.PI*2
-
         );
 
         ctx.fill();
@@ -394,9 +509,9 @@ function drawCoins(){
 
 }
 
-// ======================================
+// =====================================
 // GOAL FLAG
-// ======================================
+// =====================================
 
 function drawGoal(){
 
@@ -409,9 +524,9 @@ function drawGoal(){
 
         goalFlag.y,
 
-        12,
+        10,
 
-        200
+        220
 
     );
 
@@ -420,11 +535,11 @@ function drawGoal(){
 
     ctx.fillRect(
 
-        goalFlag.x-cameraX + 12,
+        goalFlag.x-cameraX+10,
 
         goalFlag.y,
 
-        70,
+        80,
 
         50
 
@@ -432,85 +547,19 @@ function drawGoal(){
 
 }
 
-function checkGoal(){
-
-    if(
-
-        player.x >
-        goalFlag.x
-
-    ){
-
-        alert(
-            "YOU WIN!"
-        );
-
-        location.reload();
-
-    }
-
-}
-
-// ======================================
-// DAMAGE OBSTACLES
-// ======================================
-
-function updateObstacles(){
-
-    obstacles.forEach(obj=>{
-
-        if(
-            obj.type !==
-            "spikes"
-        ) return;
-
-        if(
-
-            player.x <
-            obj.x + obj.w &&
-
-            player.x +
-            player.width >
-            obj.x &&
-
-            player.y <
-            obj.y + obj.h &&
-
-            player.y +
-            player.height >
-            obj.y
-
-        ){
-
-            player.takeDamage(
-                1
-            );
-
-        }
-
-    });
-
-}
-
-// ======================================
-// WORLD UPDATE
-// ======================================
+// =====================================
+// UPDATE
+// =====================================
 
 function updateWorld(){
 
     updateCamera();
 
-    updateCoins();
-
-    updateObstacles();
-
-    checkGoal();
-
 }
 
-// ======================================
-// WORLD DRAW
-// ======================================
+// =====================================
+// DRAW
+// =====================================
 
 function drawWorld(){
 
