@@ -1,14 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
-
-<title>Crossy Chicken Adventure</title>
+<title>ChickenRunner</title>
 
 <style>
 
@@ -24,279 +20,89 @@ body{
 
     background:#111;
 
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    height:100vh;
+
     font-family:Arial,sans-serif;
 
 }
 
-/* ====================== */
-/* GAME CANVAS */
-/* ====================== */
-
-#game{
-
-    display:block;
-
-    margin:auto;
+canvas{
 
     border:4px solid black;
 
     image-rendering:pixelated;
-    image-rendering:crisp-edges;
 
-    background:#76d6ff;
+    background:#87ceeb;
 
 }
 
-/* ====================== */
-/* LOADING SCREEN */
-/* ====================== */
-
-#loadingScreen{
+#loading{
 
     position:fixed;
 
     inset:0;
 
-    background:#123;
-
-    color:white;
-
     display:flex;
-
-    flex-direction:column;
 
     justify-content:center;
 
     align-items:center;
 
-    z-index:1000;
-
-}
-
-#loadingTitle{
-
-    font-size:64px;
-
-    margin-bottom:20px;
-
-}
-
-#loadingBar{
-
-    width:400px;
-
-    height:40px;
-
-    border:4px solid white;
-
-    background:#222;
-
-    overflow:hidden;
-
-}
-
-#loadingFill{
-
-    width:0%;
-
-    height:100%;
-
-    background:lime;
-
-}
-
-#loadingText{
-
-    margin-top:20px;
-
-    font-size:20px;
-
-}
-
-/* ====================== */
-/* MAIN MENU */
-/* ====================== */
-
-#mainMenu{
-
-    position:fixed;
-
-    inset:0;
-
-    background:
-    rgba(0,0,0,0.6);
-
-    display:flex;
-
-    flex-direction:column;
-
-    justify-content:center;
-
-    align-items:center;
-
-    z-index:900;
-
-}
-
-.menuButton{
-
-    width:300px;
-
-    height:70px;
-
-    margin:12px;
-
-    font-size:28px;
-
-    cursor:pointer;
-
-}
-
-#version{
+    background:#111;
 
     color:white;
 
-    margin-top:20px;
+    font-size:30px;
 
-}
-
-/* ====================== */
-/* HUD */
-/* ====================== */
-
-#hud{
-
-    position:fixed;
-
-    top:10px;
-
-    left:10px;
-
-    color:white;
-
-    font-size:22px;
-
-    text-shadow:
-    2px 2px black;
-
-    display:none;
-
-    z-index:500;
+    z-index:999;
 
 }
 
 </style>
-
 </head>
 
 <body>
 
-<!-- ========================= -->
-<!-- LOADING SCREEN -->
-<!-- ========================= -->
-
-<div id="loadingScreen">
-
-    <div id="loadingTitle">
-
-        CROSSY CHICKEN
-
-    </div>
-
-    <div id="loadingBar">
-
-        <div id="loadingFill"></div>
-
-    </div>
-
-    <div id="loadingText">
-
-        Loading...
-
-    </div>
-
+<div id="loading">
+    Loading ChickenRunner...
 </div>
-
-<!-- ========================= -->
-<!-- MENU -->
-<!-- ========================= -->
-
-<div id="mainMenu">
-
-    <button
-        class="menuButton"
-        id="playButton">
-
-        PLAY
-
-    </button>
-
-    <button
-        class="menuButton"
-        id="controlsButton">
-
-        CONTROLS
-
-    </button>
-
-    <button
-        class="menuButton"
-        id="creditsButton">
-
-        CREDITS
-
-    </button>
-
-    <div id="version">
-
-        Crossy Chicken Adventure v1.0
-
-    </div>
-
-</div>
-
-<!-- ========================= -->
-<!-- HUD -->
-<!-- ========================= -->
-
-<div id="hud">
-
-    ❤️ Health:
-    <span id="healthValue">5</span>
-
-    <br>
-
-    🥚 Eggs:
-    <span id="eggValue">0</span>
-
-    <br>
-
-    ⭐ Score:
-    <span id="scoreValue">0</span>
-
-</div>
-
-<!-- ========================= -->
-<!-- GAME CANVAS -->
-<!-- ========================= -->
 
 <canvas
-id="game"
-width="1280"
-height="720">
+    id="game"
+    width="1280"
+    height="720">
 </canvas>
 
 <script>
 
-// ========================
-// KEY INPUT
-// ========================
+// ================================
+// GLOBALS
+// ================================
+
+const canvas =
+document.getElementById("game");
+
+const ctx =
+canvas.getContext("2d");
+
+ctx.imageSmoothingEnabled =
+false;
+
+// ================================
+// INPUT
+// ================================
 
 const keys = {};
 
 document.addEventListener(
     "keydown",
-    e => {
+    (e)=>{
 
         keys[
             e.key.toLowerCase()
@@ -307,7 +113,7 @@ document.addEventListener(
 
 document.addEventListener(
     "keyup",
-    e => {
+    (e)=>{
 
         keys[
             e.key.toLowerCase()
@@ -316,24 +122,18 @@ document.addEventListener(
     }
 );
 
-// Prevent page scrolling
+// Prevent scrolling
 
 window.addEventListener(
     "keydown",
-    e => {
+    (e)=>{
 
         if(
-
             e.code === "Space" ||
-
             e.key === "ArrowUp" ||
-
             e.key === "ArrowDown" ||
-
             e.key === "ArrowLeft" ||
-
             e.key === "ArrowRight"
-
         ){
 
             e.preventDefault();
@@ -343,157 +143,42 @@ window.addEventListener(
     }
 );
 
-// ========================
-// CANVAS
-// ========================
-
-const canvas =
-document.getElementById(
-    "game"
-);
-
-const ctx =
-canvas.getContext(
-    "2d"
-);
-
-ctx.imageSmoothingEnabled =
-false;
-
-// ========================
-// MENU
-// ========================
-
-document
-.getElementById(
-    "playButton"
-)
-.onclick = () => {
-
-    document
-    .getElementById(
-        "mainMenu"
-    )
-    .style.display =
-    "none";
-
-    document
-    .getElementById(
-        "hud"
-    )
-    .style.display =
-    "block";
-
-    if(
-        window.initGame
-    ){
-
-        initGame();
-
-    }
-
-};
-
-document
-.getElementById(
-    "controlsButton"
-)
-.onclick = () => {
-
-    alert(
-
-`Controls
-
-A/D = Move
-
-W or Space = Jump
-
-F = Attack
-
-ESC = Pause
-
-H = Toggle Help`
-
-    );
-
-};
-
-document
-.getElementById(
-    "creditsButton"
-)
-.onclick = () => {
-
-    alert(
-
-`Crossy Chicken Adventure
-
-Created by You
-
-Powered by HTML5 Canvas`
-
-    );
-
-};
-
-// ========================
-// LOADING BAR
-// ========================
-
-let loadProgress = 0;
-
-const loadingBar =
-document.getElementById(
-    "loadingFill"
-);
-
-const loadingScreen =
-document.getElementById(
-    "loadingScreen"
-);
-
-const loadTimer =
-setInterval(() => {
-
-    loadProgress += 2;
-
-    loadingBar.style.width =
-    loadProgress + "%";
-
-    if(
-        loadProgress >= 100
-    ){
-
-        clearInterval(
-            loadTimer
-        );
-
-        loadingScreen.style.display =
-        "none";
-
-    }
-
-},25);
-
 </script>
 
-<!-- ========================= -->
-<!-- FILES -->
-<!-- ========================= -->
+<!-- ===================== -->
+<!-- GAME FILES -->
+<!-- ===================== -->
 
-<script src="assets.js"></script>
+<script src="javascript/assets.js"></script>
 
-<script src="player.js"></script>
+<script src="javascript/player.js"></script>
 
-<script src="enemies.js"></script>
+<script src="javascript/enemies.js"></script>
 
-<script src="world.js"></script>
+<script src="javascript/world.js"></script>
 
-<script src="collision.js"></script>
+<script src="javascript/collision.js"></script>
 
-<script src="ui.js"></script>
+<script src="javascript/ui.js"></script>
 
-<script src="game.js"></script>
+<script src="javascript/game.js"></script>
+
+<script>
+
+// Hide loading screen once everything loads
+
+window.addEventListener(
+    "load",
+    ()=>{
+
+        document
+        .getElementById("loading")
+        .style.display = "none";
+
+    }
+);
+
+</script>
 
 </body>
 </html>
