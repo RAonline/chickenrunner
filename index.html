@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Crossy Chicken Adventure</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+
+    overflow:hidden;
+
+    background:
+    linear-gradient(
+        #87CEEB 0%,
+        #A8E6FF 40%,
+        #C9F2A7 100%
+    );
+
+    font-family:Arial,Helvetica,sans-serif;
+
+}
+
+#game{
+
+    display:block;
+    margin:auto;
+
+    image-rendering:pixelated;
+    image-rendering:crisp-edges;
+
+    border:4px solid #111;
+    background:#6fd3ff;
+
+}
+
+#loadingScreen{
+
+    position:absolute;
+
+    left:0;
+    top:0;
+
+    width:100%;
+    height:100%;
+
+    display:flex;
+    flex-direction:column;
+
+    justify-content:center;
+    align-items:center;
+
+    background:
+    radial-gradient(
+        circle at center,
+        #7ef37e,
+        #2b6a2b
+    );
+
+    z-index:100;
+}
+
+#title{
+
+    font-size:64px;
+    font-weight:bold;
+
+    color:white;
+
+    text-shadow:
+    4px 4px #000;
+
+    margin-bottom:20px;
+}
+
+#subtitle{
+
+    font-size:22px;
+    color:white;
+
+    margin-bottom:40px;
+}
+
+#loadingBar{
+
+    width:450px;
+    height:40px;
+
+    border:4px solid black;
+
+    background:#222;
+}
+
+#loadingFill{
+
+    width:0%;
+
+    height:100%;
+
+    background:
+    linear-gradient(
+      to right,
+      gold,
+      yellow
+    );
+}
+
+#status{
+
+    margin-top:20px;
+    color:white;
+    font-size:20px;
+}
+
+#hud{
+
+    position:absolute;
+
+    left:15px;
+    top:15px;
+
+    color:white;
+
+    font-size:22px;
+
+    font-weight:bold;
+
+    text-shadow:2px 2px black;
+
+    pointer-events:none;
+
+    display:none;
+}
+
+#menu{
+
+    position:absolute;
+
+    width:100%;
+    height:100%;
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+    align-items:center;
+
+    background:
+    rgba(0,0,0,0.5);
+
+    z-index:90;
+}
+
+.menuButton{
+
+    width:300px;
+    height:70px;
+
+    margin:10px;
+
+    font-size:28px;
+    font-weight:bold;
+
+    border:none;
+    border-radius:10px;
+
+    cursor:pointer;
+
+    background:#ffdd44;
+
+    transition:0.2s;
+}
+
+.menuButton:hover{
+
+    transform:scale(1.05);
+
+}
+
+.version{
+
+    margin-top:20px;
+    color:white;
+}
+
+</style>
+</head>
+<body>
+
+<div id="loadingScreen">
+
+    <div id="title">
+        CROSSY CHICKEN
+    </div>
+
+    <div id="subtitle">
+        Adventure Edition
+    </div>
+
+    <div id="loadingBar">
+        <div id="loadingFill"></div>
+    </div>
+
+    <div id="status">
+        Loading Assets...
+    </div>
+
+</div>
+
+<div id="menu">
+
+    <button
+        class="menuButton"
+        id="startButton">
+
+        PLAY GAME
+
+    </button>
+
+    <button
+        class="menuButton">
+
+        OPTIONS
+
+    </button>
+
+    <button
+        class="menuButton">
+
+        CREDITS
+
+    </button>
+
+    <div class="version">
+
+        Version 0.1 Alpha
+
+    </div>
+
+</div>
+
+<div id="hud">
+
+    ❤️ Health:
+    <span id="healthValue">5</span>
+
+    <br>
+
+    🥚 Eggs:
+    <span id="eggValue">0</span>
+
+    <br>
+
+    ⭐ Score:
+    <span id="scoreValue">0</span>
+
+</div>
+
+<canvas
+    id="game"
+    width="1280"
+    height="720">
+</canvas>
+
+<script>
+
+//==================================================
+// LOADING SCREEN
+//==================================================
+
+let progress = 0;
+
+const fill =
+    document.getElementById("loadingFill");
+
+const loading =
+    document.getElementById("loadingScreen");
+
+const menu =
+    document.getElementById("menu");
+
+const hud =
+    document.getElementById("hud");
+
+const status =
+    document.getElementById("status");
+
+const startButton =
+    document.getElementById("startButton");
+
+const loadInterval =
+setInterval(()=>{
+
+    progress += 2;
+
+    fill.style.width =
+    progress + "%";
+
+    status.innerText =
+    "Loading Assets: " +
+    progress + "%";
+
+    if(progress >= 100){
+
+        clearInterval(loadInterval);
+
+        status.innerText =
+        "Ready!";
+
+        setTimeout(()=>{
+
+            loading.style.display =
+            "none";
+
+        },500);
+
+    }
+
+},40);
+
+//==================================================
+// START GAME BUTTON
+//==================================================
+
+startButton.onclick = ()=>{
+
+    menu.style.display = "none";
+
+    hud.style.display = "block";
+
+    if(window.initGame){
+
+        initGame();
+
+    }
+
+};
+
+//==================================================
+// CANVAS SETUP
+//==================================================
+
+const canvas =
+document.getElementById("game");
+
+const ctx =
+canvas.getContext("2d");
+
+ctx.imageSmoothingEnabled = false;
+
+//==================================================
+// PLACEHOLDER BACKGROUND
+//==================================================
+
+function drawPlaceholder(){
+
+    ctx.fillStyle =
+    "#6fd3ff";
+
+    ctx.fillRect(
+        0,0,
+        canvas.width,
+        canvas.height
+    );
+
+    ctx.fillStyle =
+    "#67c64b";
+
+    ctx.fillRect(
+        0,
+        600,
+        canvas.width,
+        120
+    );
+
+}
+
+drawPlaceholder();
+
+</script>
+
+<!-- FILE 2 -->
+
+<script src="assets.js"></script>
+
+<!-- FILE 3 -->
+
+<script src="game.js"></script>
+
+</body>
+</html>
