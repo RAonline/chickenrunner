@@ -1,5 +1,6 @@
 // =====================================
 // ENEMIES.JS
+// CHICKEN RUNNER
 // =====================================
 
 class Enemy {
@@ -8,59 +9,59 @@ class Enemy {
 
         this.type = type;
 
-        this.data =
-        EnemyTypes[type];
-
         this.x = x;
         this.y = y;
 
         this.startX = x;
 
-        this.width =
-        this.data.width;
-
-        this.height =
-        this.data.height;
-
-        this.speed =
-        this.data.speed;
-
-        this.health =
-        this.data.health;
+        this.direction = 1;
 
         this.dead = false;
 
-        this.direction = 1;
-
         this.frame = 0;
-
         this.frameTimer = 0;
 
-        this.animationSpeed = 10;
+        this.health =
+        EnemyTypes[type].health;
+
+        this.width = 80;
+        this.height = 80;
+
+        this.speed =
+        EnemyTypes[type].speed;
 
     }
 
-    // =============================
-    // AI
-    // =============================
+    // ===========================
+    // UPDATE
+    // ===========================
 
     update(){
 
         if(this.dead)
             return;
 
-        this.patrol();
+        this.move();
 
         this.animate();
 
-        this.checkPlayerCollision();
+        this.checkCollision();
 
     }
 
-    patrol(){
+    // ===========================
+    // MOVEMENT
+    // ===========================
 
-        if(this.type === "plant")
+    move(){
+
+        if(
+            this.type === "plant"
+        ){
+
             return;
+
+        }
 
         this.x +=
         this.speed *
@@ -68,7 +69,7 @@ class Enemy {
 
         if(
             this.x >
-            this.startX + 120
+            this.startX + 150
         ){
 
             this.direction = -1;
@@ -77,7 +78,7 @@ class Enemy {
 
         if(
             this.x <
-            this.startX - 120
+            this.startX - 150
         ){
 
             this.direction = 1;
@@ -86,13 +87,86 @@ class Enemy {
 
     }
 
+    // ===========================
+    // PLAYER COLLISION
+    // ===========================
+
+    checkCollision(){
+
+        if(
+
+            player.x <
+            this.x + this.width &&
+
+            player.x +
+            player.width >
+            this.x &&
+
+            player.y <
+            this.y + this.height &&
+
+            player.y +
+            player.height >
+            this.y
+
+        ){
+
+            // Stomp
+
+            if(
+                player.velY > 2 &&
+                player.y <
+                this.y
+            ){
+
+                this.takeDamage(1);
+
+                player.velY =
+                -10;
+
+            }
+
+            else{
+
+                player.takeDamage(1);
+
+            }
+
+        }
+
+    }
+
+    // ===========================
+    // DAMAGE
+    // ===========================
+
+    takeDamage(amount){
+
+        this.health -= amount;
+
+        if(
+            this.health <= 0
+        ){
+
+            this.dead =
+            true;
+
+            player.addScore(100);
+
+        }
+
+    }
+
+    // ===========================
+    // ANIMATE
+    // ===========================
+
     animate(){
 
         this.frameTimer++;
 
         if(
-            this.frameTimer >=
-            this.animationSpeed
+            this.frameTimer > 10
         ){
 
             this.frameTimer = 0;
@@ -100,7 +174,7 @@ class Enemy {
             this.frame++;
 
             if(
-                this.frame >= 3
+                this.frame > 2
             ){
 
                 this.frame = 0;
@@ -111,84 +185,26 @@ class Enemy {
 
     }
 
-    checkPlayerCollision(){
-
-        if(
-            !player ||
-            this.dead
-        ) return;
-
-        if(
-
-            player.x <
-            this.x + this.width &&
-
-            player.x + player.width >
-            this.x &&
-
-            player.y <
-            this.y + this.height &&
-
-            player.y + player.height >
-            this.y
-
-        ){
-
-            // stomp
-
-            if(
-                player.velY > 3
-            ){
-
-                this.takeDamage(1);
-
-                player.velY = -8;
-
-            }
-
-            else{
-
-                player.takeDamage(
-                    GameData.enemyDamage
-                );
-
-            }
-
-        }
-
-    }
-
-    takeDamage(amount){
-
-        if(this.dead)
-            return;
-
-        this.health -= amount;
-
-        if(this.health <= 0){
-
-            this.dead = true;
-
-            player.addScore(100);
-
-        }
-
-    }
+    // ===========================
+    // DRAW
+    // ===========================
 
     draw(){
 
         if(this.dead)
             return;
 
-        const frameSize = 128;
+        if(
+            !Assets.ready()
+        ) return;
 
-        let sourceX =
-        this.frame *
-        frameSize;
+        const frameWidth = 150;
+        const frameHeight = 150;
 
-        let sourceY =
-        this.data.row *
-        frameSize;
+        const row =
+        EnemyTypes[
+            this.type
+        ].row;
 
         ctx.save();
 
@@ -202,18 +218,23 @@ class Enemy {
 
                 Assets.enemySheet,
 
-                sourceX,
-                sourceY,
+                this.frame *
+                frameWidth,
 
-                frameSize,
-                frameSize,
+                row *
+                frameHeight,
 
-                -(this.x-cameraX)
-                - this.width,
+                frameWidth,
+
+                frameHeight,
+
+                -(this.x-cameraX) -
+                this.width,
 
                 this.y,
 
                 this.width,
+
                 this.height
 
             );
@@ -226,17 +247,22 @@ class Enemy {
 
                 Assets.enemySheet,
 
-                sourceX,
-                sourceY,
+                this.frame *
+                frameWidth,
 
-                frameSize,
-                frameSize,
+                row *
+                frameHeight,
+
+                frameWidth,
+
+                frameHeight,
 
                 this.x-cameraX,
 
                 this.y,
 
                 this.width,
+
                 this.height
 
             );
@@ -255,114 +281,112 @@ class Enemy {
 
 const enemies = [
 
-    // SPAWN AREA
+    // Slimes
 
     new Enemy(
         "slime",
-        700,
-        555
+        900,
+        540
     ),
 
     new Enemy(
         "slime",
-        1200,
-        555
+        1400,
+        540
     ),
 
-    // FOREST
+    // Goblins
 
     new Enemy(
         "goblin",
-        1900,
-        540
+        2200,
+        520
     ),
 
     new Enemy(
         "goblin",
-        2400,
-        540
+        2800,
+        520
     ),
 
-    // GRAVEYARD
+    // Skeletons
 
     new Enemy(
         "skeleton",
-        3200,
-        540
+        3500,
+        520
     ),
 
     new Enemy(
         "skeleton",
-        3600,
-        540
+        3900,
+        520
     ),
 
-    // CAVE
+    // Bats
 
     new Enemy(
         "bat",
-        4500,
-        350
-    ),
-
-    new Enemy(
-        "bat",
-        5000,
+        4600,
         300
     ),
 
-    // DANGER ZONE
+    new Enemy(
+        "bat",
+        5200,
+        350
+    ),
+
+    // Spider
 
     new Enemy(
         "spider",
-        5600,
-        560
+        6000,
+        540
     ),
+
+    // Ghost
 
     new Enemy(
         "ghost",
-        6200,
+        6700,
         450
     ),
 
-    // FINAL AREA
+    // Final Bandit
 
     new Enemy(
         "bandit",
-        7200,
-        520
+        7300,
+        500
     )
 
 ];
 
 // =====================================
-// UPDATE
+// UPDATE ALL
 // =====================================
 
 function updateEnemies(){
 
-    for(
-        let enemy of enemies
-    ){
+    enemies.forEach(enemy=>{
 
         enemy.update();
 
-    }
+    });
 
 }
 
 // =====================================
-// DRAW
+// DRAW ALL
 // =====================================
 
 function drawEnemies(){
 
-    for(
-        let enemy of enemies
-    ){
+    enemies.forEach(enemy=>{
 
         enemy.draw();
 
-    }
+    });
 
 }
