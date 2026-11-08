@@ -2,8 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Crossy Chicken Adventure</title>
 
@@ -76,10 +75,10 @@ body{
 
     color:white;
 
-    text-shadow:
-    4px 4px #000;
+    text-shadow:4px 4px #000;
 
     margin-bottom:20px;
+
 }
 
 #subtitle{
@@ -88,6 +87,7 @@ body{
     color:white;
 
     margin-bottom:40px;
+
 }
 
 #loadingBar{
@@ -98,20 +98,21 @@ body{
     border:4px solid black;
 
     background:#222;
+
 }
 
 #loadingFill{
 
     width:0%;
-
     height:100%;
 
     background:
     linear-gradient(
-      to right,
-      gold,
-      yellow
+        to right,
+        gold,
+        yellow
     );
+
 }
 
 #status{
@@ -119,6 +120,7 @@ body{
     margin-top:20px;
     color:white;
     font-size:20px;
+
 }
 
 #hud{
@@ -139,6 +141,7 @@ body{
     pointer-events:none;
 
     display:none;
+
 }
 
 #menu{
@@ -155,10 +158,10 @@ body{
     justify-content:center;
     align-items:center;
 
-    background:
-    rgba(0,0,0,0.5);
+    background:rgba(0,0,0,0.5);
 
     z-index:90;
+
 }
 
 .menuButton{
@@ -179,6 +182,7 @@ body{
     background:#ffdd44;
 
     transition:0.2s;
+
 }
 
 .menuButton:hover{
@@ -191,6 +195,7 @@ body{
 
     margin-top:20px;
     color:white;
+
 }
 
 </style>
@@ -219,32 +224,20 @@ body{
 
 <div id="menu">
 
-    <button
-        class="menuButton"
-        id="startButton">
-
+    <button class="menuButton" id="startButton">
         PLAY GAME
-
     </button>
 
-    <button
-        class="menuButton">
-
+    <button class="menuButton">
         OPTIONS
-
     </button>
 
-    <button
-        class="menuButton">
-
+    <button class="menuButton">
         CREDITS
-
     </button>
 
     <div class="version">
-
         Version 0.1 Alpha
-
     </div>
 
 </div>
@@ -275,28 +268,62 @@ body{
 <script>
 
 //==================================================
+// KEYBOARD INPUT SYSTEM
+//==================================================
+
+const keys = {};
+
+document.addEventListener("keydown",(e)=>{
+
+    keys[e.key.toLowerCase()] = true;
+
+});
+
+document.addEventListener("keyup",(e)=>{
+
+    keys[e.key.toLowerCase()] = false;
+
+});
+
+window.addEventListener("keydown",(e)=>{
+
+    if(
+        e.code === "Space" ||
+        e.key === "ArrowUp" ||
+        e.key === "ArrowDown" ||
+        e.key === "ArrowLeft" ||
+        e.key === "ArrowRight"
+    ){
+
+        e.preventDefault();
+
+    }
+
+});
+
+//==================================================
 // LOADING SCREEN
 //==================================================
 
 let progress = 0;
 
 const fill =
-    document.getElementById("loadingFill");
+document.getElementById("loadingFill");
 
 const loading =
-    document.getElementById("loadingScreen");
+document.getElementById("loadingScreen");
 
 const menu =
-    document.getElementById("menu");
+document.getElementById("menu");
 
 const hud =
-    document.getElementById("hud");
+document.getElementById("hud");
 
 const status =
-    document.getElementById("status");
+document.getElementById("status");
 
 const startButton =
-    document.getElementById("startButton");
+document.getElementById("startButton");
 
 const loadInterval =
 setInterval(()=>{
@@ -329,7 +356,7 @@ setInterval(()=>{
 },40);
 
 //==================================================
-// START GAME BUTTON
+// START BUTTON
 //==================================================
 
 startButton.onclick = ()=>{
@@ -347,7 +374,7 @@ startButton.onclick = ()=>{
 };
 
 //==================================================
-// CANVAS SETUP
+// CANVAS
 //==================================================
 
 const canvas =
@@ -359,7 +386,7 @@ canvas.getContext("2d");
 ctx.imageSmoothingEnabled = false;
 
 //==================================================
-// PLACEHOLDER BACKGROUND
+// PLACEHOLDER SCENE
 //==================================================
 
 function drawPlaceholder(){
@@ -368,7 +395,8 @@ function drawPlaceholder(){
     "#6fd3ff";
 
     ctx.fillRect(
-        0,0,
+        0,
+        0,
         canvas.width,
         canvas.height
     );
@@ -383,18 +411,25 @@ function drawPlaceholder(){
         120
     );
 
+    ctx.fillStyle =
+    "white";
+
+    ctx.font =
+    "48px Arial";
+
+    ctx.fillText(
+        "Crossy Chicken Adventure",
+        300,
+        180
+    );
+
 }
 
 drawPlaceholder();
 
 </script>
 
-<!-- FILE 2 -->
-
 <script src="assets.js"></script>
-
-<!-- FILE 3 -->
-
 <script src="game.js"></script>
 
 </body>
