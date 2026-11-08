@@ -4,8 +4,6 @@
 
 let gamePaused = false;
 
-let showControls = true;
-
 let fps = 0;
 let frames = 0;
 
@@ -21,94 +19,47 @@ setInterval(() => {
 },1000);
 
 // =====================================
-// ESC TO PAUSE
+// PAUSE
 // =====================================
 
 document.addEventListener("keydown",(e)=>{
 
     if(e.key === "Escape"){
 
-        gamePaused =
-        !gamePaused;
-
-    }
-
-    if(e.key === "h"){
-
-        showControls =
-        !showControls;
+        gamePaused = !gamePaused;
 
     }
 
 });
 
 // =====================================
-// DOM HUD
+// UPDATE
 // =====================================
 
-function updateHUD(){
+function updateUI(){
 
-    const health =
-    document.getElementById(
-        "healthValue"
-    );
-
-    const score =
-    document.getElementById(
-        "scoreValue"
-    );
-
-    const eggs =
-    document.getElementById(
-        "eggValue"
-    );
-
-    if(health){
-
-        health.innerText =
-        player.health;
-
-    }
-
-    if(score){
-
-        score.innerText =
-        player.score;
-
-    }
-
-    if(eggs){
-
-        eggs.innerText =
-        player.eggs;
-
-    }
+    // future UI updates here
 
 }
 
 // =====================================
-// HEART BAR
+// HEARTS
 // =====================================
 
 function drawHearts(){
 
-    for(
-        let i=0;
-        i<player.health;
-        i++
-    ){
+    for(let i=0;i<player.health;i++){
 
-        ctx.fillStyle =
-        "red";
+        ctx.fillStyle = "red";
 
         ctx.beginPath();
 
         ctx.arc(
-            40 + (i*35),
-            40,
-            12,
+            25 + (i*30),
+            30,
+            10,
             0,
-            Math.PI*2
+            Math.PI * 2
         );
 
         ctx.fill();
@@ -118,66 +69,43 @@ function drawHearts(){
 }
 
 // =====================================
-// SCORE PANEL
+// SCORE
 // =====================================
 
-function drawScoreBox(){
+function drawScore(){
 
-    ctx.fillStyle =
-    "rgba(0,0,0,0.5)";
+    ctx.fillStyle = "white";
 
-    ctx.fillRect(
-        15,
-        60,
-        250,
-        110
-    );
-
-    ctx.fillStyle =
-    "white";
-
-    ctx.font =
-    "20px Arial";
+    ctx.font = "20px Arial";
 
     ctx.fillText(
         "Score: " + player.score,
-        30,
-        90
+        20,
+        80
     );
 
     ctx.fillText(
         "Eggs: " + player.eggs,
-        30,
-        120
-    );
-
-    ctx.fillText(
-        "Enemies: " +
-        enemies.filter(
-            e=>!e.dead
-        ).length,
-        30,
-        150
+        20,
+        110
     );
 
 }
 
 // =====================================
-// FPS DISPLAY
+// FPS
 // =====================================
 
 function drawFPS(){
 
-    ctx.fillStyle =
-    "yellow";
+    ctx.fillStyle = "yellow";
 
-    ctx.font =
-    "18px Arial";
+    ctx.font = "16px Arial";
 
     ctx.fillText(
         "FPS: " + fps,
         canvas.width - 100,
-        30
+        25
     );
 
 }
@@ -188,59 +116,44 @@ function drawFPS(){
 
 function drawControls(){
 
-    if(!showControls)
-        return;
-
     ctx.fillStyle =
-    "rgba(0,0,0,0.7)";
+    "rgba(0,0,0,0.6)";
 
     ctx.fillRect(
-        20,
-        500,
-        340,
-        170
+        10,
+        canvas.height - 120,
+        250,
+        110
     );
 
     ctx.fillStyle =
     "white";
 
     ctx.font =
-    "18px Arial";
+    "16px Arial";
 
     ctx.fillText(
-        "Controls",
-        40,
-        530
+        "A / D = Move",
+        20,
+        canvas.height - 85
     );
 
     ctx.fillText(
-        "A/D = Move",
-        40,
-        560
+        "SPACE = Jump",
+        20,
+        canvas.height - 60
     );
 
     ctx.fillText(
-        "W or Space = Jump",
-        40,
-        590
-    );
-
-    ctx.fillText(
-        "F = Peck Attack",
-        40,
-        620
-    );
-
-    ctx.fillText(
-        "ESC = Pause",
-        40,
-        650
+        "F = Peck",
+        20,
+        canvas.height - 35
     );
 
 }
 
 // =====================================
-// PAUSE MENU
+// PAUSE SCREEN
 // =====================================
 
 function drawPauseScreen(){
@@ -261,187 +174,20 @@ function drawPauseScreen(){
     ctx.fillStyle =
     "white";
 
+    ctx.font =
+    "60px Arial";
+
     ctx.textAlign =
     "center";
 
-    ctx.font =
-    "64px Arial";
-
     ctx.fillText(
-
         "PAUSED",
-
         canvas.width/2,
-
         canvas.height/2
-
-    );
-
-    ctx.font =
-    "24px Arial";
-
-    ctx.fillText(
-
-        "Press ESC To Continue",
-
-        canvas.width/2,
-
-        canvas.height/2 + 50
-
     );
 
     ctx.textAlign =
     "left";
-
-}
-
-// =====================================
-// GAME OVER
-// =====================================
-
-function drawGameOver(){
-
-    if(player.health > 0)
-        return;
-
-    ctx.fillStyle =
-    "rgba(0,0,0,0.9)";
-
-    ctx.fillRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
-
-    ctx.fillStyle =
-    "#ff4444";
-
-    ctx.textAlign =
-    "center";
-
-    ctx.font =
-    "72px Arial";
-
-    ctx.fillText(
-
-        "GAME OVER",
-
-        canvas.width/2,
-
-        250
-
-    );
-
-    ctx.fillStyle =
-    "white";
-
-    ctx.font =
-    "32px Arial";
-
-    ctx.fillText(
-
-        "Score: " +
-        player.score,
-
-        canvas.width/2,
-
-        340
-
-    );
-
-    ctx.fillText(
-
-        "Refresh To Try Again",
-
-        canvas.width/2,
-
-        400
-
-    );
-
-    ctx.textAlign =
-    "left";
-
-}
-
-// =====================================
-// WIN SCREEN
-// =====================================
-
-function drawVictory(){
-
-    if(
-        player.x <
-        goalFlag.x
-    ) return;
-
-    ctx.fillStyle =
-    "rgba(0,0,0,0.8)";
-
-    ctx.fillRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
-
-    ctx.fillStyle =
-    "#00ff88";
-
-    ctx.textAlign =
-    "center";
-
-    ctx.font =
-    "70px Arial";
-
-    ctx.fillText(
-
-        "YOU WIN!",
-
-        canvas.width/2,
-
-        250
-
-    );
-
-    ctx.font =
-    "32px Arial";
-
-    ctx.fillText(
-
-        "Final Score: " +
-        player.score,
-
-        canvas.width/2,
-
-        330
-
-    );
-
-    ctx.fillText(
-
-        "Eggs Collected: " +
-        player.eggs,
-
-        canvas.width/2,
-
-        380
-
-    );
-
-    ctx.textAlign =
-    "left";
-
-}
-
-// =====================================
-// UPDATE UI
-// =====================================
-
-function updateUI(){
-
-    updateHUD();
 
 }
 
@@ -455,16 +201,12 @@ function drawUI(){
 
     drawHearts();
 
-    drawScoreBox();
+    drawScore();
 
     drawFPS();
 
     drawControls();
 
     drawPauseScreen();
-
-    drawGameOver();
-
-    drawVictory();
 
 }
