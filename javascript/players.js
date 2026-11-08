@@ -1,5 +1,6 @@
 // =====================================
 // PLAYER.JS
+// CHICKEN RUNNER
 // =====================================
 
 class Chicken {
@@ -9,22 +10,22 @@ class Chicken {
         this.x = 100;
         this.y = 500;
 
-        this.width = 64;
-        this.height = 64;
+        this.width = 96;
+        this.height = 96;
 
         this.velX = 0;
         this.velY = 0;
 
-        this.speed = GameData.playerSpeed;
+        this.speed = 5;
 
-        this.health = GameData.maxHealth;
+        this.health = 5;
 
         this.score = 0;
         this.eggs = 0;
 
         this.grounded = false;
 
-        this.facing = "right";
+        this.direction = "right";
 
         this.animation = "idle";
 
@@ -38,151 +39,109 @@ class Chicken {
 
     }
 
-    // ==========================
+    // ==============================
     // INPUT
-    // ==========================
+    // ==============================
 
     handleInput() {
 
         this.velX = 0;
 
-        if(keys["a"]){
+        if(keys["a"]) {
 
             this.velX = -this.speed;
 
-            this.facing = "left";
-
-        }
-
-        if(keys["d"]){
-
-            this.velX = this.speed;
-
-            this.facing = "right";
-
-        }
-
-        if(
-            (keys["w"] ||
-             keys["arrowup"] ||
-             keys[" "]) &&
-            this.grounded
-        ){
-
-            this.velY = -GameData.jumpPower;
-
-            this.grounded = false;
-
-            if(Sounds.jump){
-                Sounds.jump.currentTime = 0;
-                Sounds.jump.play();
-            }
-
-        }
-
-        if(keys["f"]){
-
-            this.attacking = true;
-
-        }
-
-    }
-
-    // ==========================
-    // MOVEMENT
-    // ==========================
-
-    updatePhysics() {
-
-        this.x += this.velX;
-
-        this.velY += GameData.gravity;
-
-        this.y += this.velY;
-
-        if(this.y > 1000){
-
-            this.health = 0;
-
-        }
-
-    }
-
-    // ==========================
-    // ANIMATION
-    // ==========================
-
-    chooseAnimation() {
-
-        if(this.health <= 0){
-
-            this.animation = "death";
-
-            return;
-
-        }
-
-        if(this.attacking){
-
-            this.animation = "peck";
-
-            return;
-
-        }
-
-        if(!this.grounded){
-
-            if(this.facing === "right")
-                this.animation = "walkRight";
-            else
-                this.animation = "walkLeft";
-
-            return;
-
-        }
-
-        if(this.velX > 0){
-
-            this.animation = "walkRight";
-
-        }
-
-        else if(this.velX < 0){
+            this.direction = "left";
 
             this.animation = "walkLeft";
 
         }
 
-        else{
+        if(keys["d"]) {
+
+            this.velX = this.speed;
+
+            this.direction = "right";
+
+            this.animation = "walkRight";
+
+        }
+
+        if(
+            !keys["a"] &&
+            !keys["d"] &&
+            !this.attacking
+        ){
 
             this.animation = "idle";
 
         }
 
+        if(
+            (keys["w"] || keys[" "]) &&
+            this.grounded
+        ){
+
+            this.velY =
+            -GameData.jumpPower;
+
+            this.grounded = false;
+
+        }
+
+        if(keys["f"]) {
+
+            this.attacking = true;
+
+            this.animation = "peck";
+
+        }
+
     }
 
-    animate() {
+    // ==============================
+    // PHYSICS
+    // ==============================
+
+    updatePhysics(){
+
+        this.x += this.velX;
+
+        this.velY +=
+        GameData.gravity;
+
+        this.y += this.velY;
+
+    }
+
+    // ==============================
+    // ANIMATION
+    // ==============================
+
+    animate(){
 
         this.frameTimer++;
 
-        const anim =
-        ChickenAnimations[
-            this.animation
-        ];
-
-        if(this.frameTimer >= this.frameSpeed){
+        if(
+            this.frameTimer >=
+            this.frameSpeed
+        ){
 
             this.frameTimer = 0;
 
             this.frame++;
 
-            if(this.frame >= anim.frames){
+            if(this.frame > 5){
 
                 this.frame = 0;
 
                 if(this.attacking){
 
-                    this.attacking = false;
+                    this.attacking =
+                    false;
+
+                    this.animation =
+                    "idle";
 
                 }
 
@@ -192,150 +151,158 @@ class Chicken {
 
     }
 
-    // ==========================
+    // ==============================
     // UPDATE
-    // ==========================
+    // ==============================
 
-    update() {
+    update(){
 
         this.handleInput();
 
         this.updatePhysics();
 
-        this.chooseAnimation();
-
         this.animate();
 
     }
 
-    // ==========================
+    // ==============================
     // DRAW
-    // ==========================
+    // ==============================
 
-    draw() {
+    draw(){
 
-        if(!Assets.ready())
-            return;
+        if(
+            !Assets.ready()
+        ) return;
 
-        const spriteWidth = 128;
-        const spriteHeight = 128;
+        const frameWidth = 170;
+        const frameHeight = 170;
 
-        const anim =
-        ChickenAnimations[
+        let row = 0;
+
+        switch(
             this.animation
-        ];
+        ){
 
-        const sourceX =
-        this.frame * spriteWidth;
+            case "idle":
 
-        const sourceY =
-        anim.row * spriteHeight;
+                row = 0;
 
-        if(this.facing === "left"){
+                break;
 
-            ctx.save();
+            case "walkRight":
 
-            ctx.scale(-1,1);
+                row = 1;
 
-            ctx.drawImage(
+                break;
 
-                Assets.chickenSheet,
+            case "walkLeft":
 
-                sourceX,
-                sourceY,
+                row = 2;
 
-                spriteWidth,
-                spriteHeight,
+                break;
 
-                -(this.x-cameraX)-this.width,
-                this.y,
+            case "walkUp":
 
-                this.width,
-                this.height
+                row = 3;
 
-            );
+                break;
 
-            ctx.restore();
+            case "walkDown":
 
-        }
+                row = 4;
 
-        else{
+                break;
 
-            ctx.drawImage(
+            case "peck":
 
-                Assets.chickenSheet,
+                row = 5;
 
-                sourceX,
-                sourceY,
+                break;
 
-                spriteWidth,
-                spriteHeight,
+            case "hurt":
 
-                this.x-cameraX,
-                this.y,
+                row = 6;
 
-                this.width,
-                this.height
+                break;
 
-            );
+            case "death":
+
+                row = 7;
+
+                break;
 
         }
+
+        ctx.drawImage(
+
+            Assets.chickenSheet,
+
+            this.frame *
+            frameWidth,
+
+            row *
+            frameHeight,
+
+            frameWidth,
+
+            frameHeight,
+
+            this.x -
+            cameraX,
+
+            this.y,
+
+            this.width,
+
+            this.height
+
+        );
 
     }
 
-    // ==========================
+    // ==============================
     // DAMAGE
-    // ==========================
+    // ==============================
 
-    takeDamage(amount) {
+    takeDamage(amount){
 
         this.health -= amount;
 
-        document.getElementById(
-            "healthValue"
-        ).innerText =
-        Math.max(this.health,0);
+        if(
+            this.health < 0
+        ){
 
-        if(Sounds.hurt){
-
-            Sounds.hurt.currentTime = 0;
-
-            Sounds.hurt.play();
+            this.health = 0;
 
         }
 
     }
 
-    // ==========================
-    // COINS
-    // ==========================
+    // ==============================
+    // SCORE
+    // ==============================
 
     addScore(amount){
 
         this.score += amount;
 
-        document.getElementById(
-            "scoreValue"
-        ).innerText =
-        this.score;
-
     }
+
+    // ==============================
+    // EGGS
+    // ==============================
 
     addEgg(){
 
         this.eggs++;
-
-        document.getElementById(
-            "eggValue"
-        ).innerText =
-        this.eggs;
 
     }
 
 }
 
 // =====================================
-// CREATE PLAYER
+// PLAYER INSTANCE
 // =====================================
 
 const player =
